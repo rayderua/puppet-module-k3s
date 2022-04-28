@@ -5,6 +5,6 @@ class k3s::config (
 ) {
   file {'/etc/default/k3s':
     ensure    => present,
-    content   => template('k4s/default.erb')
+    content   => template('k3s/default.erb')
   }
 }
