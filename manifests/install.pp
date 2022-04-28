@@ -3,7 +3,7 @@ class k3s::install (
 ) inherits k3s {
 
   include archive
-  $k3s_url = "https://github.com/k3s-io/k3s/releases/download/v${k3s::version}+k3s/k3s"
+  $k3s_url = "https://github.com/k3s-io/k3s/releases/download/${k3s::version}/k3s"
 
   if ( $k3s::ensure == 'present' ) {
     $notify = [ Service['k3s'], Exec['k3s-systemd-reload'] ]
