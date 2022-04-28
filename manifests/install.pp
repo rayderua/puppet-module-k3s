@@ -44,9 +44,10 @@ class k3s::install (
   file { "/etc/systemd/system/k3s.service":
     ensure  => $k3s::ensure,
     owner   => 'root', group => 'root', mode => '0644',
-    source  => "puppet:///modules/${module_name}/k3s.service",
+    # source  => "puppet:///modules/${module_name}/k3s.service",
+    content => template('k3s/k3s.service.erb'),
     require => File['/usr/local/bin/k3s'],
-    notify  => $notify,
+    notify  => concat($notify, Exec['k3s-systemd-reload'])
   }
 
 }

@@ -1,7 +1,6 @@
 class k3s::config (
-  $args = $::k3s::params::args,
-  $args_prefix = $::k3s::params::args_prefix,
-  $envs = $::k3s::params::envs,
+  Array[String] $args = $::k3s::params::args,
+  Hash $envs = $::k3s::params::envs,
 ) {
   file {'/etc/default/k3s':
     ensure    => present,

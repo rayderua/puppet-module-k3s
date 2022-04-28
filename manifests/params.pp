@@ -7,6 +7,10 @@ class k3s::params {
   $checksum = "e2b86b5a3ad2f90cf2218ad39cbc5c825dd329cf761e34929dc4c7267996d329"
 
   $args_prefix = "--"
-  $args = { }
+  $args = [
+    '--no-deploy "traefik"',
+    '--docker',
+    '--kubelet-arg "cgroup-driver=systemd"',
+  ]
   $envs = { }
 }
