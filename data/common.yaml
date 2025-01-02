@@ -1,0 +1,18 @@
+---
+k3s::service_ensure: 'running'
+k3s::ensure: 'present'
+k3s::service_enable: true
+k3s::service_restart: false
+k3s::version: "v1.31.4+k3s1"
+k3s::checksum: "74897e4af26ea383ce50f445752f40ca63a0aef0d90994fb74073c43063eeeb2"
+
+k3s::args_prefix: "--"
+k3s::args:
+  - '--disable=traefik'
+  - '--docker'
+  - '--kubelet-arg "cgroup-driver=systemd"'
+k3s::envs: {}
+
+k3s::manifests: {}
+#  nginx: 'https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.0/deploy/static/provider/cloud/deploy.yaml'
+#  cert-manager: 'https://github.com/cert-manager/cert-manager/releases/download/v1.16.2/cert-manager.yaml'
