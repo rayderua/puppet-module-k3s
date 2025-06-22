@@ -43,9 +43,9 @@ class k3s (
   contain k3s::service
 
   if ( 'absent' == $k3s::ensure and true == $purge ) {
-    $k3s::_notify = Service[$k3s::service_name]
+    $_notify = Service[$k3s::service_name]
   } else {
-    $k3s::_notify = undef
+    $_notify = undef
   }
 
   if ( 'present' == $ensure ) {
