@@ -11,13 +11,9 @@ class k3s::install (
     if ( true == $purge ) {
       file { [
         '/usr/local/bin/k3s',
-        '/etc/rancher',
         '/etc/rancher/k3s',
         '/etc/rancher/node',
-        '/var/lib/rancher',
         '/var/lib/rancher/k3s',
-        '/var/lib/rancher/k3s/server',
-        '/var/lib/rancher/k3s/server/manifests',
         '/etc/profile.d/k3s.sh',
         "/etc/systemd/system/${k3s::service_name}.service"
       ]:
