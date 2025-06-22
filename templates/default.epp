@@ -1,0 +1,8 @@
+<% |
+  Hash $envs,
+  | -%>
+# THIS FILE IS MANAGED BY PUPPET
+
+<% $envs.each | $env_name, $env_value | { -%>
+<%= $env_name -%>="<%= $env_value %>
+<% } -%>
