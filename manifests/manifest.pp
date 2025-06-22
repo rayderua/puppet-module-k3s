@@ -29,7 +29,7 @@
 #
 
 define k3s::manifest (
-  Enum['present','absent'] $ensure                = 'present',
+  Enum['present','absent'] $ensure               = 'present',
   Variant[Undef, String] $source                 = undef,
   Variant[Undef, String] $content                = undef,
   Variant[Undef, Hash, Array[Hash]] $config      = undef,
@@ -53,32 +53,35 @@ define k3s::manifest (
     fail("Parameters 'source', 'content', 'config', 'link' are mutually exclusive")
   }
 
+  if ( 'absent' == $k3s::ensure  or 'absent' == $ensure ) {
+    $_ensure = 'absent'
+  } else {
+    $_ensure = 'present'
+  }
+
   $_manifest_path = "/var/lib/rancher/k3s/server/manifests/${name}.yaml"
-  if ( 'absent' == $ensure ) {
-    file { "/var/lib/rancher/k3s/server/manifests/${name}.yaml":
-      ensure => $ensure
+  if ( undef != $link ) {
+    archive { "k3s-manifest-${name}":
+      ensure        => $_ensure,
+      path          => $_manifest_path,
+      source        => $link,
+      cleanup       => false,
+      creates       => $_manifest_path,
+      checksum      => $link_checksum,
+      checksum_type => $link_checksum_type,
     }
   } else {
-    if ( undef != $link ) {
-      archive { "k3s-manifest-${name}":
-        path          => $_manifest_path,
-        source        => $link,
-        cleanup       => false,
-        creates       => $_manifest_path,
-        checksum      => $link_checksum,
-        checksum_type => $link_checksum_type,
+    if ( undef == $source ) {
+      file { "k3s-manifest-${name}":
+        ensure  => $_ensure,
+        path    => $_manifest_path,
+        content => epp("${module_name}/manifest.epp", { 'config' => $config, 'content' => $content, 'name' => $name }),
       }
     } else {
-      if ( undef == $source ) {
-        file { "rke2-manifest-${name}":
-          path    => $_manifest_path,
-          content => epp("${module_name}/manifest.epp", { 'config' => $config, 'content' => $content, 'name' => $name }),
-        }
-      } else {
-        file { "k3s-manifest-${name}":
-          path    => $_manifest_path,
-          source  => $source,
-        }
+      file { "k3s-manifest-${name}":
+        ensure  => $_ensure,
+        path    => $_manifest_path,
+        source  => $source,
       }
     }
   }

@@ -3,7 +3,6 @@ class k3s::install (
 ) inherits k3s {
 
   assert_private()
-
   include archive
 
   $_download_url = "https://github.com/k3s-io/k3s/releases/download/${k3s::version}/k3s"
@@ -25,6 +24,7 @@ class k3s::install (
         ensure => $k3s::ensure,
         purge  => true,
         backup => false,
+        force  => true,
       }
 
       ['k3s-killall.sh', 'k3s-uninstall.sh'].each | String $_script | {
@@ -32,6 +32,7 @@ class k3s::install (
           ensure => $k3s::ensure,
           purge  => true,
           backup => false,
+          force  => true,
         }
       }
     }
@@ -44,22 +45,19 @@ class k3s::install (
       checksum_type => 'sha256',
       cleanup       => false,
       creates       => '/usr/local/bin/k3s',
-      notify        => $k3s::_notify,
+      notify        => Service[$k3s::service_name],
     }
 
     file { '/usr/local/bin/k3s':
       ensure  => $k3s::ensure,
       mode    => '0755',
       require => Archive['/usr/local/bin/k3s'],
-      notify  => $_notify,
+      notify  => Service[$k3s::service_name],
     }
 
     ['k3s-killall.sh', 'k3s-uninstall.sh'].each | String $_script | {
       file { "/usr/local/bin/${_script}":
-        ensure => 'present' == $k3s::ensure ? {
-          true    => 'file',
-          default => $k3s::ensure
-        },
+        ensure => $k3s::ensure,
         mode   => '0755',
         source => "puppet:///modules/${module_name}/bin/${_script}",
       }
@@ -81,7 +79,7 @@ class k3s::install (
     }
 
     file { '/etc/profile.d/k3s.sh':
-      ensure => $rke2::ensure,
+      ensure => $k3s::ensure,
       source => "puppet:///modules/${module_name}/etc/profile.sh",
     }
 
@@ -92,7 +90,7 @@ class k3s::install (
       mode    => '0644',
       content => epp("${module_name}/k3s.service.epp"),
       require => File['/usr/local/bin/k3s'],
-      notify  => concat($k3s::_notify, Exec['k3s-systemd-reload']),
+      notify  => [ Service[$k3s::service_name], Exec['k3s-systemd-reload'] ],
     }
   }
 }

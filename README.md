@@ -13,17 +13,19 @@ include k3s
 ```yaml
 # Defaults (see data/common.yaml in module)
 ---
+k3s::ensure: present
 k3s::version: v1.32.5+k3s1
 k3s::checksum: 9624ef0534b1be432b4ce8dd94dcd7241ed02451d970a4d38943baccf5c60dce
-k3s::ensure: present
-k3s::service_name: k3s
-k3s::service_ensure: running
-k3s::service_enable: true
-k3s::service_restart: false
+k3s::purge: false
+k3s::run_mode: server
 k3s::envs: {}
 k3s::args: []
 k3s::config: {}
 k3s::manifests: {}
+k3s::service_name: k3s
+k3s::service_ensure: running
+k3s::service_enable: true
+k3s::service_restart: false
 ```
 
 ### Define additional manifests

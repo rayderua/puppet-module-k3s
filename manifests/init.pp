@@ -38,23 +38,18 @@ class k3s (
   Boolean                   $service_restart,
 ) {
 
+  if ( 'present' == $k3s::ensure ) {
+    $_notify = [ Service[$k3s::service_name] ]
+  } else {
+    $_notify = [ undef ]
+  }
+
   contain k3s::install
   contain k3s::config
   contain k3s::service
 
-  if ( 'absent' == $k3s::ensure and true == $purge ) {
-    $_notify = Service[$k3s::service_name]
-  } else {
-    $_notify = undef
-  }
+  Class['k3s::install']
+  -> Class['k3s::config']
+  -> Class['k3s::service']
 
-  if ( 'present' == $ensure ) {
-    Class['k3s::install']
-    -> Class['k3s::config']
-    -> Class['k3s::service']
-  } else {
-    Class['k3s::service']
-    -> Class['k3s::config']
-    -> Class['k3s::install']
-  }
 }

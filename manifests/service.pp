@@ -8,7 +8,6 @@ class k3s::service (
     refreshonly => true,
   }
 
-
   if ( 'present' == $k3s::ensure ) {
     service { $k3s::service_name:
       ensure  => $k3s::service_ensure,

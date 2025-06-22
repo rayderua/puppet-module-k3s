@@ -1,6 +1,6 @@
 [Unit]
 Description=Lightweight Kubernetes
-Documentation=https://github.com/rancher/rke2#readme
+Documentation=https://github.com/rancher/k3s#readme
 After=network-online.target
 Wants=network-online.target
 
