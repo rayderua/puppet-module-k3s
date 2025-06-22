@@ -2,6 +2,7 @@
 k3s::version: v1.32.5+k3s1
 k3s::checksum: 9624ef0534b1be432b4ce8dd94dcd7241ed02451d970a4d38943baccf5c60dce
 k3s::ensure: present
+k3s::run_mode: server
 k3s::service_name: k3s
 k3s::service_ensure: running
 k3s::service_enable: true
