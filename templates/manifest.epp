@@ -1,0 +1,19 @@
+<% |
+  $config,
+  $content,
+  $name,
+  | -%>
+# THIS FILE IS MANAGED BY PUPPET
+<% if ( undef != $content ) { -%>
+# k3s::manifest: <%= $name %>
+<%= $content -%>
+<% } else { -%>
+<% if ( $config =~ Hash ) { -%>
+<%= stdlib::to_yaml($config,  { line_width => 4096}) %>
+<% } elsif ( $config =~ Array ) { -%>
+<% $config.each | Integer $index, Hash $data | { -%>
+# k3s::manifest: <%= $name -%>.<%= $index %>
+<%= stdlib::to_yaml($data,  { line_width => 4096}) %>
+<% } -%>
+<% } -%>
+<% } -%>
