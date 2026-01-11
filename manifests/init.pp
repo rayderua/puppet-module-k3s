@@ -25,7 +25,7 @@
 class k3s (
   Enum['present','absent']  $ensure,
   String                    $version,
-  String                    $checksum,
+  Variant[Undef,String]     $checksum,
   Boolean                   $purge,
   Enum['agent', 'server']   $run_mode,
   Hash                      $envs,

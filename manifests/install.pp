@@ -38,10 +38,15 @@ class k3s::install (
       default:    { fail("Unsupporetd archtecture ${facts['os']['architecture:']}") }
     }
 
+    $_checksum = ( '' == $checksum ) ? {
+      true => undef,
+      default => $checksum
+    }
+
     archive { '/usr/local/bin/k3s':
       ensure        => $k3s::ensure,
       source        => $_download_url,
-      checksum      => $k3s::checksum,
+      checksum      => $_checksum,
       checksum_type => 'sha256',
       cleanup       => false,
       creates       => '/usr/local/bin/k3s',
