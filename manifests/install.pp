@@ -5,8 +5,6 @@ class k3s::install (
   assert_private()
   include archive
 
-  $_download_url = "https://github.com/k3s-io/k3s/releases/download/${k3s::version}/k3s"
-
   if ( 'absent' == $k3s::ensure ) {
     if ( true == $purge ) {
       file { [
@@ -33,6 +31,12 @@ class k3s::install (
       }
     }
   } else {
+
+    case $facts['os']['architecture:'] {
+      'amd64':    { $_download_url = "https://github.com/k3s-io/k3s/releases/download/${k3s::version}/k3s" }
+      'aarch64':  { $_download_url = "https://github.com/k3s-io/k3s/releases/download/${k3s::version}/k3s-arm64" }
+      default:    { fail('Unsupporetd archtecture') }
+    }
 
     archive { '/usr/local/bin/k3s':
       ensure        => $k3s::ensure,
