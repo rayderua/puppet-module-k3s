@@ -1,6 +1,6 @@
 {
   "name": "rayderua-k3s",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "author": "rayder",
   "summary": "Module for installing the k3s agent/server instances",
   "license": "Apache-2.0",
