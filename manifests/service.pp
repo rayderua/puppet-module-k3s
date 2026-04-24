@@ -14,8 +14,8 @@ class k3s::service (
       enable  => $k3s::service_enable,
       require => [
         Exec['k3s-systemd-reload'],
-        File['/etc/systemd/system/k3s.service']
-      ]
+        File['/etc/systemd/system/k3s.service'],
+      ],
     }
   } else {
     service { $k3s::service_name:

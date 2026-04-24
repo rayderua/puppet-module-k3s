@@ -1,24 +1,23 @@
-class k3s::install (
-
-) inherits k3s {
+class k3s::install {
 
   assert_private()
   include archive
 
   if ( 'absent' == $k3s::ensure ) {
-    if ( true == $purge ) {
-      file { [
-        '/usr/local/bin/k3s',
-        '/etc/rancher/k3s',
-        '/etc/rancher/node',
-        '/var/lib/rancher/k3s',
-        '/etc/profile.d/k3s.sh',
-        "/etc/systemd/system/${k3s::service_name}.service"
-      ]:
-        ensure => $k3s::ensure,
-        purge  => true,
-        backup => false,
-        force  => true,
+    if ( true == $k3s::purge ) {
+      file {
+        [
+          '/usr/local/bin/k3s',
+          '/etc/rancher/k3s',
+          '/etc/rancher/node',
+          '/var/lib/rancher/k3s',
+          '/etc/profile.d/k3s.sh',
+          "/etc/systemd/system/${k3s::service_name}.service",
+        ]:
+          ensure => $k3s::ensure,
+          purge  => true,
+          backup => false,
+          force  => true,
       }
 
       ['k3s-killall.sh', 'k3s-uninstall.sh'].each | String $_script | {
@@ -45,14 +44,14 @@ class k3s::install (
       checksum_type => 'sha256',
       cleanup       => false,
       creates       => '/usr/local/bin/k3s',
-      notify        => Service[$k3s::service_name],
+      notify        => $k3s::_service_notify,
     }
 
     file { '/usr/local/bin/k3s':
       ensure  => $k3s::ensure,
       mode    => '0755',
       require => Archive['/usr/local/bin/k3s'],
-      notify  => Service[$k3s::service_name],
+      notify  => $k3s::_service_notify,
     }
 
     ['k3s-killall.sh', 'k3s-uninstall.sh'].each | String $_script | {
@@ -63,19 +62,20 @@ class k3s::install (
       }
     }
 
-    file { [
-      '/etc/rancher',
-      '/etc/rancher/k3s',
-      '/etc/rancher/node',
-      '/var/lib/rancher',
-      '/var/lib/rancher/k3s',
-      '/var/lib/rancher/k3s/server',
-      '/var/lib/rancher/k3s/server/manifests'
-    ]:
-      ensure => directory,
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0755',
+    file {
+      [
+        '/etc/rancher',
+        '/etc/rancher/k3s',
+        '/etc/rancher/node',
+        '/var/lib/rancher',
+        '/var/lib/rancher/k3s',
+        '/var/lib/rancher/k3s/server',
+        '/var/lib/rancher/k3s/server/manifests',
+      ]:
+        ensure => directory,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0755',
     }
 
     file { '/etc/profile.d/k3s.sh':
@@ -90,7 +90,7 @@ class k3s::install (
       mode    => '0644',
       content => epp("${module_name}/k3s.service.epp"),
       require => File['/usr/local/bin/k3s'],
-      notify  => [ Service[$k3s::service_name], Exec['k3s-systemd-reload'] ],
+      notify  => [$k3s::_service_notify, Exec['k3s-systemd-reload']],
     }
   }
 }

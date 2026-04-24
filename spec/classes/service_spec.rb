@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe 'k3s::service' do
+describe 'k3s' do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
       let(:facts) { os_facts }

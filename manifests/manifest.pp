@@ -37,6 +37,9 @@ define k3s::manifest (
   Variant[Undef, String] $link_checksum          = undef,
   Variant[Undef, String] $link_checksum_type     = undef,
 ) {
+
+  contain k3s
+
   $_sources = delete_undef_values(
     [$source, $content, $config, $link].reduce([]) | $memo, $data | {
       if ( undef == $data ) {
@@ -70,6 +73,13 @@ define k3s::manifest (
       checksum      => $link_checksum,
       checksum_type => $link_checksum_type,
     }
+
+    file { $_manifest_path:
+      ensure => file,
+      owner  => 'root',
+      group  => 'root',
+      require => Archive["k3s-manifest-${name}"]
+    }
   } else {
     if ( undef == $source ) {
       file { "k3s-manifest-${name}":
@@ -79,9 +89,9 @@ define k3s::manifest (
       }
     } else {
       file { "k3s-manifest-${name}":
-        ensure  => $_ensure,
-        path    => $_manifest_path,
-        source  => $source,
+        ensure => $_ensure,
+        path   => $_manifest_path,
+        source => $source,
       }
     }
   }
